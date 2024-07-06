@@ -8,12 +8,14 @@ This project is a Python-based data collection system that fetches League of Leg
 pip install requests python-dotenv sqlalchemy pandas pymysql
 
 # Set up environment variables in the project root
-RIOT_API_KEY=your_riot_api_key
-DB_USER=your_database_username
-DB_PASSWORD=your_database_password
-DB_HOST=your_database_host
-DB_PORT=your_database_port
-DB_NAME=your_database_name
+RIOT_API_KEY=your_riot_api_key\
+DB_USER=your_database_username\
+DB_PASSWORD=your_database_password\
+DB_HOST=your_database_host\
+DB_PORT=your_database_port\
+DB_NAME=your_database_name\
+GAME_NAME=your_riot_id\
+TAG_LINE=your_tag_line
 
 ## Data Collected 
 The following data is collected for each participant in a match:
