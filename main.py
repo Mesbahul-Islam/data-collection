@@ -4,8 +4,6 @@ import pandas as pd
 
 
 engine = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}')
-game_name = 'hahamarakha'
-tag_line = '9960'
 puuid = get_puuid(game_name, tag_line)
 matches = get_matches_by_puuid(puuid)
 match_data, player_info = get_match_by_id(matches)
