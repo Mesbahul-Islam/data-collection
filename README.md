@@ -23,4 +23,4 @@ Lane\
 Kills\
 Deaths\
 Assists\
-Win/Loss\
+Win/Loss
