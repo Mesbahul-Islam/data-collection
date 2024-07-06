@@ -18,9 +18,9 @@ DB_NAME=your_database_name
 ## Data Collected 
 The following data is collected for each participant in a match:
 
-Champion Name\n
-Lane\n
-Kills\n
-Deaths\n
-Assists\n
-Win/Loss\n
+Champion Name\
+Lane\
+Kills\
+Deaths\
+Assists\
+Win/Loss\
