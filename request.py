@@ -57,14 +57,14 @@ def get_matches_by_puuid(puuid: str) -> List[str]:
         response = session.get(matches_by_puuid_url)
         response.raise_for_status()
         matches = response.json()
-        return matches[:5]
+        return matches[:3]
     except HTTPError as http_err:
         logger.error(f"HTTP error occurred: {http_err}")
     except Exception as err:
         logger.error(f"Other error occurred: {err}")
     return []
 
-def get_match_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[str]]]:
+def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[str]]]:
     """
     Get the match data by the match id
     """
@@ -88,11 +88,14 @@ def get_match_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[str]]]:
 
 
 def get_player_data(player_info_list: List[str]) -> List[Dict]:
-    for player in player_info_list:
-        player_matches = get_matches_by_puuid(player)
-        match_data, player_info = get_match_by_id(player_matches)
-        selective_data = get_selective_data(player_info)
-        return selective_data
+    selective_data = []
+    for players in player_info_list:
+        for player in players:
+            player_matches = get_matches_by_puuid(player)
+            match_data, player_info = get_match_data_by_id(player_matches)
+            selective_data.append(get_selective_data(match_data))
+    return selective_data
+
 
 def get_selective_data(match_data: List[Dict]) -> List[Dict]:
     """
@@ -109,7 +112,16 @@ def get_selective_data(match_data: List[Dict]) -> List[Dict]:
                 'deaths': participant['deaths'],
                 'kills': participant['kills'],
                 'assists': participant['assists'],
-                'win': participant['win']
+                'win': participant['win'],
+                'riotIdGameName': participant['riotIdGameName'],
+                'riotIdTagline': participant['riotIdTagline'],
+                'item0': participant['item0'],
+                'item1': participant['item1'],
+                'item2': participant['item2'],
+                'item3': participant['item3'],
+                'item4': participant['item4'],
+                'item5': participant['item5'],
+                'item6': participant['item6']
             }
             champion_stats.append(data)
     return champion_stats
