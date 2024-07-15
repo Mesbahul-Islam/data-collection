@@ -86,6 +86,14 @@ def get_match_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[str]]]:
             logger.error(f"Other error occurred: {err}")
     return match_data, player_info
 
+
+def get_player_data(player_info_list: List[str]) -> List[Dict]:
+    for player in player_info_list:
+        player_matches = get_matches_by_puuid(player)
+        match_data, player_info = get_match_by_id(player_matches)
+        selective_data = get_selective_data(player_info)
+        return selective_data
+
 def get_selective_data(match_data: List[Dict]) -> List[Dict]:
     """
     Get the selected data from the participants
