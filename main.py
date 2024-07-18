@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from request import *
+from transform import *
 import pandas as pd
 
 start_index = read_start_index() #for initial call to get_matches_by_puuid
@@ -10,6 +11,18 @@ matches = get_matches_by_puuid(puuid, start_index)
 match_data, player_info = get_match_data_by_id(matches, api_key, region)
 champion_stats = get_player_data(player_info)
 champion_stats_df = pd.DataFrame(champion for match in champion_stats for champion in match)
+
+items_url = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/items.json'
+response = session.get(items_url)
+response.raise_for_status()
+items = response.json()
+
+items_id = json_extract(items, 'id')
+items_name = json_extract(items, 'name')
+
+item_dict = create_mapped_dict(items_id, items_name)
+
+champion_stats_df.replace(item_dict, inplace=True)
 champion_stats_df.to_sql('champion_stats', engine, if_exists='replace', index = False)
 
 
