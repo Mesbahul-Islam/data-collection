@@ -21,6 +21,7 @@ db_port = os.getenv('DB_PORT')
 db_name = os.getenv('DB_NAME')
 game_name = os.getenv('GAME_NAME')
 tag_line = os.getenv('TAG_LINE')
+region = os.getenv('REGION') #europe, americas, asia
 
 #checking for environment variables
 required_env_vars = [api_key, db_user, db_password, db_host, db_port, db_name, game_name, tag_line]
@@ -35,7 +36,7 @@ def get_puuid(game_name: str, tag_line: str) -> str:
     Get the puuid of the player
     """
 
-    api_url = f"https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}" + '?api_key=' + api_key
+    api_url = f"https://{region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}" + '?api_key=' + api_key
     try:
         response = session.get(api_url)
         response.raise_for_status()
@@ -60,18 +61,26 @@ def write_start_index(start_index: int):
             else:
                 f.write(line)
 
+def read_start_index() -> int:
+    """
+    Read the start index from the .env file
+    """
+    with open('.env', 'r') as f:
+        lines = f.readlines()
+    for line in lines:
+        if 'START_INDEX' in line:
+            return int(line.split('=')[1].strip())
+    return 0
 
 def get_matches_by_puuid(puuid: str, start_index: int) -> List[str]:
     """
     Get the matches of the player by their puuid
     """
-    matches_by_puuid_url = f'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/' + f'ids?start={start_index}&count=4' + '&api_key=' + api_key 
+    matches_by_puuid_url = f'https://{region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/' + f'ids?start={start_index}&count=2' + '&api_key=' + api_key 
     try:
         response = session.get(matches_by_puuid_url)
         response.raise_for_status()
         matches = response.json()
-        start_index += 4
-        write_start_index(start_index) #update .env file with the new start index
         return matches
     except HTTPError as http_err:
         logger.error(f"HTTP error occurred: {http_err}")
@@ -87,7 +96,7 @@ def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[st
     match_data = []
     player_info = []
     for i in range(len(match_ids)):
-        matches_by_matchID_url = f"https://europe.api.riotgames.com/lol/match/v5/matches/{match_ids[i]}?api_key=" + api_key
+        matches_by_matchID_url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_ids[i]}?api_key=" + api_key
         try:
             response = session.get(matches_by_matchID_url)
             response.raise_for_status()
@@ -103,13 +112,15 @@ def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[st
     return match_data, player_info
 
 
-def get_player_data(player_info_list: List[str], start_index: int) -> List[Dict]:
+def get_player_data(player_info_list: List[str]) -> List[Dict]:
     selective_data = []
+    start_index = read_start_index()
     for players in player_info_list:
         for player in players:
             player_matches = get_matches_by_puuid(player,start_index)
             match_data, player_info = get_match_data_by_id(player_matches)
             selective_data.append(get_selective_data(match_data))
+    write_start_index((start_index+4))
     return selective_data
 
 
