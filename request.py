@@ -1,4 +1,5 @@
 import requests
+import time
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from dotenv import load_dotenv
@@ -89,16 +90,18 @@ def get_matches_by_puuid(puuid: str, start_index: int) -> List[str]:
     return []
 
 
-def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[str]]]:
+def get_match_data_by_id(match_ids: List[str], api_key: str, region: str) -> Tuple[List[Dict], List[List[str]]]:
     """
     Get the match data by the match id
     """
+    base_url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/"
     match_data = []
     player_info = []
-    for i in range(len(match_ids)):
-        matches_by_matchID_url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_ids[i]}?api_key=" + api_key
+
+    for match_id in match_ids:
+        url = f"{base_url}{match_id}?api_key={api_key}"
         try:
-            response = session.get(matches_by_matchID_url)
+            response = session.get(url)
             response.raise_for_status()
             data = response.json()
             metadata = data['metadata']
@@ -106,9 +109,14 @@ def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[st
             match_data.append(info)
             player_info.append(metadata['participants'])
         except HTTPError as http_err:
-            logger.error(f"HTTP error occurred: {http_err}")
+            logger.error(f"HTTP error occurred for match ID {match_id}: {http_err}")
         except Exception as err:
-            logger.error(f"Other error occurred: {err}")
+            logger.error(f"Other error occurred for match ID {match_id}: {err}")
+        else:
+            # Handle rate limit errors specifically if needed
+            pass
+        time.sleep(1)  # Respect API rate limits
+
     return match_data, player_info
 
 
@@ -118,7 +126,7 @@ def get_player_data(player_info_list: List[str]) -> List[Dict]:
     for players in player_info_list:
         for player in players:
             player_matches = get_matches_by_puuid(player,start_index)
-            match_data, player_info = get_match_data_by_id(player_matches)
+            match_data, player_info = get_match_data_by_id(player_matches, api_key, region)
             selective_data.append(get_selective_data(match_data))
     write_start_index((start_index+4))
     return selective_data
