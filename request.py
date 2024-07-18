@@ -1,5 +1,4 @@
 import requests
-import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from dotenv import load_dotenv
@@ -24,7 +23,7 @@ game_name = os.getenv('GAME_NAME')
 tag_line = os.getenv('TAG_LINE')
 
 #checking for environment variables
-required_env_vars = [api_key, db_user, db_password, db_host, db_port, db_name]
+required_env_vars = [api_key, db_user, db_password, db_host, db_port, db_name, game_name, tag_line]
 if not all(required_env_vars):
     raise EnvironmentError("Some environment variables are missing. Please check your .env file.")
 
@@ -48,21 +47,38 @@ def get_puuid(game_name: str, tag_line: str) -> str:
         logger.error(f"Other error occurred: {err}")
     return ""
 
-def get_matches_by_puuid(puuid: str) -> List[str]:
+def write_start_index(start_index: int):
+    """
+    Write the start index to the .env file
+    """
+    with open('.env', 'r') as f:
+        lines = f.readlines()
+    with open('.env', 'w') as f:
+        for line in lines:
+            if 'START_INDEX' in line:
+                f.write(f'START_INDEX={start_index}\n')
+            else:
+                f.write(line)
+
+
+def get_matches_by_puuid(puuid: str, start_index: int) -> List[str]:
     """
     Get the matches of the player by their puuid
     """
-    matches_by_puuid_url = f'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/' + 'ids?start=0&count=20' + '&api_key=' + api_key 
+    matches_by_puuid_url = f'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/' + f'ids?start={start_index}&count=4' + '&api_key=' + api_key 
     try:
         response = session.get(matches_by_puuid_url)
         response.raise_for_status()
         matches = response.json()
-        return matches[:3]
+        start_index += 4
+        write_start_index(start_index) #update .env file with the new start index
+        return matches
     except HTTPError as http_err:
         logger.error(f"HTTP error occurred: {http_err}")
     except Exception as err:
         logger.error(f"Other error occurred: {err}")
     return []
+
 
 def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[str]]]:
     """
@@ -87,11 +103,11 @@ def get_match_data_by_id(match_ids: List[str]) -> Tuple[List[Dict], List[List[st
     return match_data, player_info
 
 
-def get_player_data(player_info_list: List[str]) -> List[Dict]:
+def get_player_data(player_info_list: List[str], start_index: int) -> List[Dict]:
     selective_data = []
     for players in player_info_list:
         for player in players:
-            player_matches = get_matches_by_puuid(player)
+            player_matches = get_matches_by_puuid(player,start_index)
             match_data, player_info = get_match_data_by_id(player_matches)
             selective_data.append(get_selective_data(match_data))
     return selective_data
