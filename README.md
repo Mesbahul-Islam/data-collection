@@ -1,6 +1,10 @@
-# Match Data Collection 
+  Match Data Collection
 
-## Overview
+Match Data Collection
+=====================
+
+Overview
+--------
 
 This project is a Python-based data collection system that fetches League of Legends match statistics using the Riot Games API. It retrieves match data for a specified player, processes the information, and stores it in a local MySQL database.
 
@@ -16,6 +20,7 @@ Environment Variables
 
 Set up the following environment variables in the `.env` file located in the project root:
 
+    
     RIOT_API_KEY=your_riot_api_key
     DB_USER=your_database_username
     DB_PASSWORD=your_database_password
@@ -27,6 +32,7 @@ Set up the following environment variables in the `.env` file located in the pro
     REGION=your_region
     FLAG=True
     START_INDEX=0
+        
 
 Data Collected
 --------------
