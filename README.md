@@ -6,7 +6,7 @@ Match Data Collection
 Overview
 --------
 
-This project is a Python-based data collection system that fetches League of Legends match statistics using the Riot Games API. It retrieves match data for a specified player, processes the information, and stores it in a local MySQL database.
+This project is a Python-based data collection system that fetches League of Legends match statistics using the Riot Games API. It retrieves match data for a specified player provided through a csv file, then spiders out to collect other player's data from all players present in the first 3 matches of the first player. Running the script again increments this counter by 3 and upon reaching the end of the match list, the script moves onto the next player in the list provided. The script also formats the data for aggregation, and stores it in a local MySQL database. This process is automated using Apache Airflow.
 
 Required Packages
 -----------------
