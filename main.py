@@ -20,4 +20,5 @@ item_dict = create_mapped_dict(items_id, items_name)
 
 champion_stats_df.replace(item_dict, inplace=True)
 champion_stats_df.to_sql('champion_stats', engine, if_exists='append', index = False)
+logger.info('champion_stats table updated')
 

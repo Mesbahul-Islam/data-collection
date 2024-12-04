@@ -9,19 +9,19 @@ def write_to_flag(value: str):
     """
     flag = str_to_bool(value)
     if not flag:
-        player_list_df = pd.read_csv("data_collection/riot_id_list/your_file.csv")
+        player_list_df = pd.read_csv("/home/mesbahul/Documents/pythonlmao/data_collection/riot_id_list/champion_stats_202407250845.csv")
         initial_game_name = os.getenv('GAME_NAME')
         initial_tag_line = os.getenv('TAG_LINE')
-        index = player_list_df[(player_list_df['riotIdGameName'] == initial_game_name) & 
+        index = player_list_df[(player_list_df['riotIdGameName'] == initial_game_name) &
                                (player_list_df['riotIdTagline'] == initial_tag_line)].index
         if not index.empty and index[0] + 1 < len(player_list_df):
             next_row = player_list_df.iloc[index[0] + 1]
             next_game_name = next_row['riotIdGameName']
             next_tag_line = next_row['riotIdTagline']
             update_env_file(next_game_name, next_tag_line)
-    with open('data_collection/.env', 'r') as f:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as f:
         lines = f.readlines()
-    with open('data_collection/.env', 'w') as f:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'w') as f:
         for line in lines:
             if 'FLAG' in line:
                 f.write(f'FLAG={value}\n')
@@ -32,10 +32,10 @@ def update_env_file(game_name: str, tag_line: str):
     """
     Update the GAME_NAME and TAG_LINE in the .env file.
     """
-    with open('data_collection/.env', 'r') as file:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as file:
         lines = file.readlines()
 
-    with open('data_collection/.env', 'w') as file:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'w') as file:
         for line in lines:
             if line.startswith('GAME_NAME='):
                 file.write(f'GAME_NAME={game_name}\n')
@@ -48,7 +48,7 @@ def read_flag() -> bool:
     """
     Read the flag value from the .env file
     """
-    with open('data_collection/.env', 'r') as f:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as f:
         lines = f.readlines()
     for line in lines:
         if 'FLAG' in line:

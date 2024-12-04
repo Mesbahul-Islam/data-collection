@@ -57,9 +57,9 @@ def write_start_index(start_index: int):
     """
     Write the start index to the .env file
     """
-    with open('data_collection/.env', 'r') as f:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as f:
         lines = f.readlines()
-    with open('data_collection/.env', 'w') as f:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'w') as f:
         for line in lines:
             if 'START_INDEX' in line:
                 f.write(f'START_INDEX={start_index}\n')
@@ -70,7 +70,7 @@ def read_start_index() -> int:
     """
     Read the start index from the .env file
     """
-    with open('data_collection/.env', 'r') as f:
+    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as f:
         lines = f.readlines()
     for line in lines:
         if 'START_INDEX' in line:
@@ -88,7 +88,6 @@ def get_matches_by_puuid(puuid: str, start_index: int) -> List[str]:
         response.raise_for_status()
         matches = response.json()
         if not matches:
-            logger.info("I am going in")
             fetch.write_to_flag("False")
             write_start_index(0)
             return []
