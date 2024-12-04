@@ -34,6 +34,31 @@ Set up the following environment variables in the `.env` file located in the pro
     START_INDEX=0
         
 
+File Structure
+--------------
+
+Here is the file structure of the project:
+
+    
+    project_root/
+    │
+    ├── api_handling/
+    │   ├── __init__.py
+    │   ├── fetch.py
+    │   ├── request.py
+    │   ├── main.py
+    │   └── .env
+    │
+    ├── riot_id_list/
+    │   └── player_id_list.csv
+    │
+    ├── dag_cfg/
+    │   └── dag_main.py
+    │
+    ├── README.md
+    └── .gitignore
+        
+
 Data Collected
 --------------
 
