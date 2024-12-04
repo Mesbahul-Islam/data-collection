@@ -54,6 +54,8 @@ Here is the file structure of the project:
     │
     ├── dag_cfg/
     │   └── dag_main.py
+    |   └── collection_dag.py
+    |   └── collection.log
     │
     ├── README.md
     └── .gitignore
