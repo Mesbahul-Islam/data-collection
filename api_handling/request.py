@@ -9,10 +9,10 @@ import os
 import logging
 from typing import List, Dict, Tuple
 
-
+# Load environment variables
 load_dotenv()
 
-#logging setup
+# Logging setup
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -24,13 +24,13 @@ db_port = os.getenv('DB_PORT')
 db_name = os.getenv('DB_NAME')
 game_name = os.getenv('GAME_NAME')
 tag_line = os.getenv('TAG_LINE')
-region = os.getenv('REGION') #europe, americas, asia
-flag = bool(os.getenv('FLAG')) #True or False
+region = os.getenv('REGION')  # europe, americas, asia
+flag = bool(os.getenv('FLAG'))  # True or False
 
-#checking for environment variables
+# Checking for environment variables
 required_env_vars = [api_key, db_user, db_password, db_host, db_port, db_name, game_name, tag_line, region, flag]
 if not all(required_env_vars):
-    raise EnvironmentError("Some environment variables are missing. Please check your .env file.")
+    raise EnvironmentError("Some environment variables are missing. Please check your api_handling/.env file.")
 
 session = requests.Session()
 session.mount('https://', HTTPAdapter(max_retries=3))
@@ -55,11 +55,11 @@ def get_puuid(game_name: str, tag_line: str) -> str:
 
 def write_start_index(start_index: int):
     """
-    Write the start index to the .env file
+    Write the start index to the api_handling/.env file
     """
-    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as f:
+    with open('api_handling/.env', 'r') as f:
         lines = f.readlines()
-    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'w') as f:
+    with open('api_handling/.env', 'w') as f:
         for line in lines:
             if 'START_INDEX' in line:
                 f.write(f'START_INDEX={start_index}\n')
@@ -68,9 +68,9 @@ def write_start_index(start_index: int):
 
 def read_start_index() -> int:
     """
-    Read the start index from the .env file
+    Read the start index from the api_handling/.env file
     """
-    with open('/home/mesbahul/Documents/pythonlmao/data_collection/.env', 'r') as f:
+    with open('api_handling/.env', 'r') as f:
         lines = f.readlines()
     for line in lines:
         if 'START_INDEX' in line:
